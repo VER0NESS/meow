@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!-- Fixed supplies for the companion.  This profile deliberately contains no
+     random supply sections or simulator tier substitutions. -->
+<character id="companion_fixed">
+	<specific_character id="companion_fixed" team_default="1">
+		<name>companion_fixed</name>
+		<icon>ui_npc_u_stalker</icon>
+		<class>novice</class>
+		<rank>novice</rank>
+		<community>stalker</community>
+		<reputation>0</reputation>
+		<visual>actors\\stalker_neutral\\stalker_neutral_1</visual>
+		<supplies>
+			[spawn]
+			wpn_ak74 = 1
+			ammo_5.45x39_fmj = 4
+			outfit_specops = 1
+			device_torch = 1
+			medkit = 2
+			bandage = 3
+			conserva = 2
+		</supplies>
+	</specific_character>
+</character>
