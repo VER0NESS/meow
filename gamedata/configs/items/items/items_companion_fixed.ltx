@@ -1,11 +1,14 @@
-; Standalone item definition to avoid a fatal config error when the base section
-; from another companion package is not present in the active load order.
-[companion_fixed_item]
+; Standalone companion token. This mirrors the original Loadout_companions item
+; structure but avoids inherited sections that can be missing in some mod setups.
+; The shared inventory icon texture is ui\companions_xcv.dds.
+[companion_fixed_item]:identity_immunities
 GroupControlSection = spawn_group
 $spawn = "food and drugs\harmonica_a"
 cform = skeleton
 class = II_ATTCH
 kind = i_misc
+identity_immunities = { }
+discovery_dependency =
 attach_angle_offset = 0.000000, -1.204452, -1.262921
 attach_position_offset = 0.081856, -0.035081, 0.011694
 attach_bone_name = bip01_l_hand
