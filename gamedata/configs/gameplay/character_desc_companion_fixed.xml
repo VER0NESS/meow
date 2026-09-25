@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="windows-1251"?>
-<!-- Fixed supplies for the companion.  This profile deliberately contains no
+<!-- Fixed supplies for the companion. This profile deliberately contains no
      random supply sections or simulator tier substitutions. -->
 <character id="companion_fixed">
 	<specific_character id="companion_fixed" team_default="1">
-		<name>companion_fixed</name>
-		<icon>ui_npc_u_stalker</icon>
-		<class>novice</class>
-		<rank>novice</rank>
-		<community>stalker</community>
-		<reputation>0</reputation>
-		<visual>actors\\stalker_neutral\\stalker_neutral_1</visual>
+		<name>Eugen Kommers</name>
+		<icon>ui_npc_u_freedom_1</icon>
+		<class>master</class>
+		<rank>master</rank>
+		<community>freedom</community>
+		<reputation>1310</reputation>
+		<visual>actors\\stalker_freedom\\stalker_freedom_veteran</visual>
 		<supplies>
 			[spawn]
 			wpn_ak74 = 1
 			ammo_5.45x39_fmj = 4
-			outfit_specops = 1
+			outfit_stalker_freedom = 1
 			device_torch = 1
 			medkit = 2
 			bandage = 3
