@@ -1,5 +1,4 @@
 # Fixed companion
-
-The addon now offers exactly one companion token. Purchasing it spawns one `companion_fixed` NPC, rather than several faction/economy-dependent simulator NPCs. Its profile uses a fixed AK-74, ammunition, outfit, torch, medical supplies, and food loadout.
-
-The companion is defined in `gamedata/configs/misc/squad_descr/squad_descr_companion_fixed.ltx` and its supplies are in `gamedata/configs/gameplay/character_desc_companion_fixed.xml`.
+remake of Companions in loadout 0.3 https://www.moddb.com/mods/stalker-anomaly/addons/companions-in-loadout-01 
+now creates only one companion and only for loners
+Also would like to add companion setup "in game" so you can choose any equipment, rank, name etc
