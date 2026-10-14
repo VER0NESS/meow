@@ -1,5 +1,5 @@
 local debugx = true
-local FIXED_COMPANION_NAME = "Companion"
+local DEFAULT_COMPANION_BASE_NAME = "Companion"
 
 function pr(...)
 	if not debugx then return end
@@ -23,6 +23,43 @@ function actor_on_first_update()
 
 end
 
+-- Генерирует уникальное имя на основе базового и id объекта
+local function generate_unique_name(base, id)
+	if id then
+		return base .. "_" .. tostring(id)
+	else
+		return base .. "_" .. tostring(math.random(1000, 9999))
+	end
+end
+
+-- Безопасный сеттер имени (пыт��емся разные методы, и записываем fallback-поле)
+local function set_companion_name(obj, name)
+	if not obj or not name then return end
+	local ok = false
+	if obj.set_name then
+		pcall(function() obj:set_name(name) end)
+		ok = true
+	end
+	if obj.SetName and not ok then
+		pcall(function() obj:SetName(name) end)
+		ok = true
+	end
+	if obj.set_npc_name and not ok then
+		pcall(function() obj:set_npc_name(name) end)
+		ok = true
+	end
+	if obj.set_nickname and not ok then
+		pcall(function() obj:set_nickname(name) end)
+		ok = true
+	end
+	-- попытка записать в поле, если методы не сработали
+	if not ok then
+		pcall(function() obj.name = name end)
+	end
+	-- попытка записать в поле npc_name если оно существует
+	pcall(function() if obj.npc_name ~= nil then obj.npc_name = name end end)
+end
+
 function create_companion_squad(sec)
 	local pos
 	local gvid = db.actor:game_vertex_id()
@@ -39,23 +76,6 @@ function create_companion_squad(sec)
 	pr("# adding npc to squad_id: [ %s ], at pos: [ %s ] || lvid: [ %s ] || gvid: [ %s ]", comp_squad_x.id, pos, lvid, gvid)
 	comp_squad_x:create_npc(nil, pos, lvid, gvid)
 
-	-- Вспомогательная функция: безопасно установить имя объекту компаньона, проверяя доступные методы
-	local function set_companion_name(obj, name)
-		if not obj then return end
-		if obj.set_name then
-			obj:set_name(name)
-		elseif obj.SetName then
-			obj:SetName(name)
-		elseif obj.set_npc_name then
-			obj:set_npc_name(name)
-		elseif obj.set_nickname then
-			obj:set_nickname(name)
-		else
-			-- fallback: записать в поле name (может не отображаться в UI, но не вызовет ошибку)
-			obj.name = name
-		end
-	end
-
 	if comp_squad_x.squad_members then
 		for k in comp_squad_x:squad_members() do
 			local se_npc = k.object or k.id and alife_object(k.id)
@@ -70,8 +90,16 @@ function create_companion_squad(sec)
 					if companion then
 						pr("#game obj found || setting game object relation and squad")
 						companion:set_relation(game_object.friend, db.actor)
-						-- Устанавливаем фиксированное имя компаньона (безопасно, проверяя доступные методы)
-						set_companion_name(companion, FIXED_COMPANION_NAME)
+						-- Генерируем уникальное имя и пытаемся его установить
+						local unique_name = generate_unique_name(DEFAULT_COMPANION_BASE_NAME, id)
+						set_companion_name(companion, unique_name)
+						-- Если модуль диалогов предоставляет метод установки имени — используем его
+						if dialogs_axr_companion and dialogs_axr_companion.set_companion_name then
+							pcall(function() dialogs_axr_companion.set_companion_name(companion, unique_name) end)
+						elseif dialogs_axr_companion and dialogs_axr_companion.SetCompanionName then
+							pcall(function() dialogs_axr_companion.SetCompanionName(companion, unique_name) end)
+						end
+						-- Также пробуем пометить компаньона как актёрского компаньона
 						dialogs_axr_companion.become_actor_companion(db.actor, companion)
 					end
 				end
@@ -79,7 +107,7 @@ function create_companion_squad(sec)
 			end
 			CreateTimeEvent("delay_companion_squad_ev", "delay_companion_squad_ac_" .. k.id, 1, delay, k.id)
 		end
-	end
+		end
 	
 end
 
