@@ -1,4 +1,6 @@
 local debugx = true
+local FIXED_COMPANION_NAME = "Companion"
+
 function pr(...)
 	if not debugx then return end
 	printf(...)
@@ -37,6 +39,23 @@ function create_companion_squad(sec)
 	pr("# adding npc to squad_id: [ %s ], at pos: [ %s ] || lvid: [ %s ] || gvid: [ %s ]", comp_squad_x.id, pos, lvid, gvid)
 	comp_squad_x:create_npc(nil, pos, lvid, gvid)
 
+	-- Вспомогательная функция: безопасно установить имя объекту компаньона, проверяя доступные методы
+	local function set_companion_name(obj, name)
+		if not obj then return end
+		if obj.set_name then
+			obj:set_name(name)
+		elseif obj.SetName then
+			obj:SetName(name)
+		elseif obj.set_npc_name then
+			obj:set_npc_name(name)
+		elseif obj.set_nickname then
+			obj:set_nickname(name)
+		else
+			-- fallback: записать в поле name (может не отображаться в UI, но не вызовет ошибку)
+			obj.name = name
+		end
+	end
+
 	if comp_squad_x.squad_members then
 		for k in comp_squad_x:squad_members() do
 			local se_npc = k.object or k.id and alife_object(k.id)
@@ -51,6 +70,8 @@ function create_companion_squad(sec)
 					if companion then
 						pr("#game obj found || setting game object relation and squad")
 						companion:set_relation(game_object.friend, db.actor)
+						-- Устанавливаем фиксированное имя компаньона (безопасно, проверяя доступные методы)
+						set_companion_name(companion, FIXED_COMPANION_NAME)
 						dialogs_axr_companion.become_actor_companion(db.actor, companion)
 					end
 				end
